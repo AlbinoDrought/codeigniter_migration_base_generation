@@ -23,7 +23,7 @@ class VpxMigration {
     var $tables = '*';
     var $newline = '\n';
     var $write_file = true;
-    var $file_name = '';
+    var $file_name = '001_create_base.php';
     var $file_per_table = true;
     var $path = 'migrations';
     var $skip_tables = array();
@@ -131,7 +131,8 @@ class VpxMigration {
                         {
                             ## not implemented ##
                             //$retval[] = $row[$tablename];
-                        } else
+                        }
+                        else
                         {
                             /* skip views */
                             if (strtolower($row['Table_type']) == 'view')
@@ -154,13 +155,11 @@ class VpxMigration {
         ## if write file, check if we can
         if ($this->write_file)
         {
-
-            /* make subdir */
-            $path = $this->path . '/' . $this->file_name;
+            $path = $this->path;
 
             if (!@is_dir($path))
             {
-
+                ## attempt to make directory if it doesn't exist
                 if (!@mkdir($path, DIR_WRITE_MODE, true))
                 {
                     return FALSE;
@@ -177,15 +176,13 @@ class VpxMigration {
                 return;
             }
 
-            //$file_path = $path . '/001_create_' . $table . '.php';
-            $file_path = $path . '/001_create_base.php';
+            $file_path = $path . DIRECTORY_SEPARATOR . $this->file_name;
             $file = fopen($file_path, 'w+');
 
             if (!$file)
             {
                 $msg = 'No File';
                 log_message('error', $msg);
-                echo $msg;
 
                 return FALSE;
             }
@@ -257,9 +254,9 @@ class VpxMigration {
         {
             fwrite($file, $return);
             fclose($file);
-            echo "Create file migration with success!";
             return true;
-        } else
+        }
+        else
         {
             return $return;
         }
@@ -267,4 +264,3 @@ class VpxMigration {
 
 }
 
-?>
